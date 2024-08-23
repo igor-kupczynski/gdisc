@@ -1,8 +1,13 @@
 export class Grid {
     private data: string[][];
+    private readonly storageKey = 'gDiscGridData';
 
     constructor() {
-        this.data = [
+        this.data = this.loadFromStorage() || this.getInitialData();
+    }
+
+    private getInitialData(): string[][] {
+        return [
             ['Name', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Total'],
             ['Player #1', '', '', '', '', '', '', '', '', '', '0'],
             ['Player #2', '', '', '', '', '', '', '', '', '', '0'],
@@ -14,6 +19,8 @@ export class Grid {
     public render(containerId: string): void {
         const container = document.getElementById(containerId);
         if (!container) return;
+
+        container.innerHTML = ''; // Clear previous content
 
         const table = document.createElement('table');
         table.className = 'editable-grid';
@@ -49,11 +56,13 @@ export class Grid {
 
     private updateName(rowIndex: number, value: string): void {
         this.data[rowIndex][0] = value;
+        this.saveToStorage();
     }
 
     private updateCell(rowIndex: number, cellIndex: number, value: string): void {
         this.data[rowIndex][cellIndex] = value;
         this.updateTotal(rowIndex);
+        this.saveToStorage();
     }
 
     private updateTotal(rowIndex: number): void {
@@ -70,5 +79,19 @@ export class Grid {
         if (totalCell) {
             totalCell.textContent = total.toString();
         }
+    }
+
+    private saveToStorage(): void {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+    }
+
+    private loadFromStorage(): string[][] | null {
+        const storedData = localStorage.getItem(this.storageKey);
+        return storedData ? JSON.parse(storedData) : null;
+    }
+
+    public reset(): void {
+        this.data = this.getInitialData();
+        this.saveToStorage();
     }
 }
