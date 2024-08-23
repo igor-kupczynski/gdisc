@@ -1,13 +1,13 @@
 import { Config } from './Config';
-import { ExampleComponent } from './components/ExampleComponent';
+import { Grid } from './components/Grid';
 
 export class App {
     private config: Config;
-    private exampleComponent: ExampleComponent;
+    private grid: Grid;
 
     constructor() {
         this.config = new Config();
-        this.exampleComponent = new ExampleComponent('User');
+        this.grid = new Grid();
     }
 
     public start(): void {
@@ -18,9 +18,9 @@ export class App {
         if (appDiv) {
             appDiv.innerHTML = `
                 <h1>Welcome to GDisc</h1>
-                <p>${this.exampleComponent.greet()}</p>
-                <p>Environment: ${this.config.environment}</p>
+                <div id="grid-container"></div>
             `;
+            this.grid.render('grid-container');
         }
     }
 }

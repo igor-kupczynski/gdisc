@@ -1,7 +1,7 @@
 {
   "name": "gdisc",
   "version": "0.0.1",
-  "description": "GDisc - A TypeScript application",
+  "description": "GDisc - Keep score of your disc golf games",
   "main": "dist/index.js",
   "scripts": {
     "start": "webpack serve --mode development",
