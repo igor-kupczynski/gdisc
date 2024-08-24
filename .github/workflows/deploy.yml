@@ -24,8 +24,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v6
         with:
+          workflow: Build
+          workflow_conclusion: success
           name: dist
           path: './docs'
       - name: Setup Pages
