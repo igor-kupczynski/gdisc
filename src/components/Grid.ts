@@ -169,8 +169,14 @@ export class Grid {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const timeInfoDiv = document.createElement('div');
-        timeInfoDiv.className = 'time-info';
+        let timeInfoDiv = container.querySelector('.time-info');
+        if (!timeInfoDiv) {
+            timeInfoDiv = document.createElement('div');
+            timeInfoDiv.className = 'time-info';
+            container.appendChild(timeInfoDiv);
+        } else {
+            timeInfoDiv.innerHTML = ''; // Clear existing content
+        }
 
         const startTimeDiv = document.createElement('div');
         startTimeDiv.id = 'game-start-time';
@@ -181,8 +187,6 @@ export class Grid {
         lastUpdatedTimeDiv.id = 'game-last-updated-time';
         lastUpdatedTimeDiv.textContent = `Last updated: ${this.formatDate(this.gameLastUpdatedTime)}`;
         timeInfoDiv.appendChild(lastUpdatedTimeDiv);
-
-        container.appendChild(timeInfoDiv);
     }
 
     public updateCellValue(rowIndex: number, cellIndex: number, value: string): void {
