@@ -21,7 +21,7 @@ export class App {
                 <div id="grid-container"></div>
                 <div class="button-container">
                 <button id="new-game-button" class="game-button">New Game (Same Players)</button>    
-                <button id="reset-button" class="game-button">Reset Game</button>    
+                <button id="reset-button" class="game-button">New Game</button>    
                 </div>
             `;
             this.grid.render('grid-container');
@@ -30,7 +30,7 @@ export class App {
             if (resetButton) {
                 resetButton.addEventListener('click', () => this.confirmReset());
             }
-
+            
             const newGameButton = document.getElementById('new-game-button');
             if (newGameButton) {
                 newGameButton.addEventListener('click', () => this.confirmNewGame());
