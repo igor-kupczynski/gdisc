@@ -131,4 +131,14 @@ export class Grid {
     public reset(): void {
         this.initializeNewGame();
     }
+
+    public startNewGame(): void {
+        const playerNames = this.data.slice(1).map(row => row[0]);
+        this.data = this.getInitialData();
+        for (let i = 0; i < playerNames.length; i++) {
+            this.data[i + 1][0] = playerNames[i];
+        }
+        this.gameStartTime = new Date();
+        this.saveToStorage();
+    }
 }

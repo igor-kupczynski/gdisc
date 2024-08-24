@@ -19,13 +19,21 @@ export class App {
             appDiv.innerHTML = `
                 <h1>GDisc: Keep score of your disc golf games</h1>
                 <div id="grid-container"></div>
-                <button id="reset-button">Reset Game</button>
+                <div class="button-container">
+                <button id="new-game-button" class="game-button">New Game (Same Players)</button>    
+                <button id="reset-button" class="game-button">Reset Game</button>    
+                </div>
             `;
             this.grid.render('grid-container');
             
             const resetButton = document.getElementById('reset-button');
             if (resetButton) {
                 resetButton.addEventListener('click', () => this.confirmReset());
+            }
+
+            const newGameButton = document.getElementById('new-game-button');
+            if (newGameButton) {
+                newGameButton.addEventListener('click', () => this.confirmNewGame());
             }
         }
     }
@@ -38,6 +46,17 @@ export class App {
 
     private resetGame(): void {
         this.grid.reset();
+        this.grid.render('grid-container');
+    }
+
+    private confirmNewGame(): void {
+        if (confirm('Are you sure you want to start a new game with the same players? This action cannot be undone.')) {
+            this.startNewGame();
+        }
+    }
+
+    private startNewGame(): void {
+        this.grid.startNewGame();
         this.grid.render('grid-container');
     }
 }
