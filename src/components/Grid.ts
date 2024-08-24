@@ -194,4 +194,16 @@ export class Grid {
         this.updateName(rowIndex, value);
         this.renderTimeInfo('time-info-container');
     }
+
+    public resetScore(): void {
+        for (let i = 1; i < this.data.length; i++) {
+            for (let j = 1; j < this.data[i].length - 1; j++) {
+                this.data[i][j] = '';
+            }
+            this.data[i][this.data[i].length - 1] = '0';
+        }
+        this.gameStartTime = new Date();
+        this.gameLastUpdatedTime = new Date();
+        this.saveToStorage();
+    }
 }
