@@ -21,7 +21,7 @@ export class App {
                 <div id="grid-container"></div>
                 <div id="time-info-container"></div>
                 <div class="button-container">
-                <button id="new-game-button" class="game-button">New Game (Same Players)</button>    
+                <button id="reset-score-button" class="game-button">Reset Score</button>    
                 <button id="reset-button" class="game-button">New Game</button>    
                 </div>
             `;
@@ -33,9 +33,9 @@ export class App {
                 resetButton.addEventListener('click', () => this.confirmReset());
             }
             
-            const newGameButton = document.getElementById('new-game-button');
-            if (newGameButton) {
-                newGameButton.addEventListener('click', () => this.confirmNewGame());
+            const resetScoreButton = document.getElementById('reset-score-button');
+            if (resetScoreButton) {
+                resetScoreButton.addEventListener('click', () => this.confirmResetScore());
             }
 
             const titleInput = document.getElementById('title-input') as HTMLInputElement;
@@ -62,14 +62,14 @@ export class App {
         this.grid.renderTimeInfo('time-info-container');
     }
 
-    private confirmNewGame(): void {
-        if (confirm('Are you sure you want to start a new game with the same players? This action cannot be undone.')) {
-            this.startNewGame();
+    private confirmResetScore(): void {
+        if (confirm('Are you sure you want to reset the score? This action cannot be undone.')) {
+            this.resetScore();
         }
     }
 
-    private startNewGame(): void {
-        this.grid.startNewGame();
+    private resetScore(): void {
+        this.grid.resetScore();
         this.grid.render('grid-container');
         this.grid.renderTimeInfo('time-info-container');
     }

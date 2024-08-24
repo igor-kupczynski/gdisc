@@ -88,12 +88,14 @@ describe('Grid', () => {
     it('should update localStorage when starting a new game', () => {
         grid['data'][1][0] = 'Alice';
         grid['data'][1][1] = '5';
+        grid.updateTitle('Custom Title');
         grid.startNewGame();
 
         const storedData = JSON.parse(localStorage.getItem(grid['storageKey'])!);
         expect(storedData.data[1][0]).toBe('Alice');
         expect(storedData.data[1][1]).toBe('');
         expect(storedData.data[1][10]).toBe('0');
+        expect(storedData.title).toBe('Custom Title');
     });
 
     test('should initialize with default title', () => {
@@ -174,5 +176,14 @@ describe('Grid', () => {
         });
         const newGrid = new Grid();
         expect(newGrid.getLastUpdatedTime().getTime()).toBe(savedLastUpdatedTime.getTime());
+    });
+
+    test('should reset title when starting a new game', () => {
+        const customTitle = 'Custom Game Title';
+        grid.updateTitle(customTitle);
+        expect(grid.getTitle()).toBe(customTitle);
+
+        grid.reset();
+        expect(grid.getTitle()).toBe('GDisc: Keep score of your disc golf games');
     });
 });

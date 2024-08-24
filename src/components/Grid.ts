@@ -21,6 +21,7 @@ export class Grid {
         this.data = this.getInitialData();
         this.gameStartTime = new Date();
         this.gameLastUpdatedTime = new Date();
+        this.title = 'GDisc: Keep score of your disc golf games';
         this.saveToStorage();
     }
 
@@ -169,8 +170,14 @@ export class Grid {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const timeInfoDiv = document.createElement('div');
-        timeInfoDiv.className = 'time-info';
+        let timeInfoDiv = container.querySelector('.time-info');
+        if (!timeInfoDiv) {
+            timeInfoDiv = document.createElement('div');
+            timeInfoDiv.className = 'time-info';
+            container.appendChild(timeInfoDiv);
+        } else {
+            timeInfoDiv.innerHTML = ''; // Clear existing content
+        }
 
         const startTimeDiv = document.createElement('div');
         startTimeDiv.id = 'game-start-time';
@@ -181,8 +188,6 @@ export class Grid {
         lastUpdatedTimeDiv.id = 'game-last-updated-time';
         lastUpdatedTimeDiv.textContent = `Last updated: ${this.formatDate(this.gameLastUpdatedTime)}`;
         timeInfoDiv.appendChild(lastUpdatedTimeDiv);
-
-        container.appendChild(timeInfoDiv);
     }
 
     public updateCellValue(rowIndex: number, cellIndex: number, value: string): void {
@@ -193,5 +198,17 @@ export class Grid {
     public updatePlayerName(rowIndex: number, value: string): void {
         this.updateName(rowIndex, value);
         this.renderTimeInfo('time-info-container');
+    }
+
+    public resetScore(): void {
+        for (let i = 1; i < this.data.length; i++) {
+            for (let j = 1; j < this.data[i].length - 1; j++) {
+                this.data[i][j] = '';
+            }
+            this.data[i][this.data[i].length - 1] = '0';
+        }
+        this.gameStartTime = new Date();
+        this.gameLastUpdatedTime = new Date();
+        this.saveToStorage();
     }
 }
