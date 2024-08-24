@@ -63,4 +63,35 @@ describe('Grid', () => {
         expect(grid['data'][1][1]).toBe('');
         expect(grid['data'][1][10]).toBe('0');
     });
+
+    it('should start a new game with the same players', () => {
+        grid['data'][1][0] = 'Alice';
+        grid['data'][2][0] = 'Bob';
+        grid['data'][1][1] = '5';
+        grid['data'][2][1] = '4';
+
+        grid.startNewGame();
+
+        expect(grid['data'][1][0]).toBe('Alice');
+        expect(grid['data'][2][0]).toBe('Bob');
+
+        expect(grid['data'][1][1]).toBe('');
+        expect(grid['data'][2][1]).toBe('');
+        expect(grid['data'][1][10]).toBe('0');
+        expect(grid['data'][2][10]).toBe('0');
+
+        const newStartTime = new Date(JSON.parse(localStorage.getItem(grid['storageKey'])!).startTime);
+        expect(newStartTime.getTime()).toBeGreaterThanOrEqual(grid['gameStartTime'].getTime());
+    });
+
+    it('should update localStorage when starting a new game', () => {
+        grid['data'][1][0] = 'Alice';
+        grid['data'][1][1] = '5';
+        grid.startNewGame();
+
+        const storedData = JSON.parse(localStorage.getItem(grid['storageKey'])!);
+        expect(storedData.data[1][0]).toBe('Alice');
+        expect(storedData.data[1][1]).toBe('');
+        expect(storedData.data[1][10]).toBe('0');
+    });
 });
