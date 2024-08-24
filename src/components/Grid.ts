@@ -21,6 +21,7 @@ export class Grid {
         this.data = this.getInitialData();
         this.gameStartTime = new Date();
         this.gameLastUpdatedTime = new Date();
+        this.title = 'GDisc: Keep score of your disc golf games';
         this.saveToStorage();
     }
 
