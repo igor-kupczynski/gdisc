@@ -132,4 +132,47 @@ describe('Grid', () => {
         const newGrid = new Grid();
         expect(newGrid.getTitle()).toBe('GDisc: Keep score of your disc golf games');
     });
+
+    test('should initialize gameLastUpdatedTime', () => {
+        expect(grid.getLastUpdatedTime()).toBeInstanceOf(Date);
+    });
+
+    test('should update gameLastUpdatedTime when updating cell', () => {
+        const initialTime = grid.getLastUpdatedTime();
+        jest.advanceTimersByTime(1000); // Advance time by 1 second
+        grid['updateCell'](1, 1, '3');
+        expect(grid.getLastUpdatedTime().getTime()).toBeGreaterThan(initialTime.getTime());
+    });
+
+    test('should update gameLastUpdatedTime when updating name', () => {
+        const initialTime = grid.getLastUpdatedTime();
+        jest.advanceTimersByTime(1000); // Advance time by 1 second
+        grid['updateName'](1, 'New Player');
+        expect(grid.getLastUpdatedTime().getTime()).toBeGreaterThan(initialTime.getTime());
+    });
+
+    test('should update gameLastUpdatedTime when updating title', () => {
+        const initialTime = grid.getLastUpdatedTime();
+        jest.advanceTimersByTime(1000); // Advance time by 1 second
+        grid.updateTitle('New Title');
+        expect(grid.getLastUpdatedTime().getTime()).toBeGreaterThan(initialTime.getTime());
+    });
+
+    test('should save gameLastUpdatedTime to localStorage', () => {
+        grid['updateCell'](1, 1, '3');
+        const savedData = JSON.parse(mockLocalStorage['gDiscGridData']);
+        expect(savedData.lastUpdatedTime).toBeDefined();
+    });
+
+    test('should load gameLastUpdatedTime from localStorage', () => {
+        const savedLastUpdatedTime = new Date();
+        mockLocalStorage['gDiscGridData'] = JSON.stringify({
+            data: grid['data'],
+            startTime: new Date().toISOString(),
+            lastUpdatedTime: savedLastUpdatedTime.toISOString(),
+            title: 'Test Title'
+        });
+        const newGrid = new Grid();
+        expect(newGrid.getLastUpdatedTime().getTime()).toBe(savedLastUpdatedTime.getTime());
+    });
 });

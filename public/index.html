@@ -94,11 +94,15 @@
         .game-button:active {
             background-color: #3e8e41;
         }
-        #game-start-time {
-            text-align: center;
+        .time-info {
             margin-top: 10px;
-            font-style: italic;
+            text-align: center;
+            font-size: 0.9em;
             color: #666;
+        }
+        #game-start-time, #game-last-updated-time {
+            display: inline-block;
+            margin: 0 10px;
         }
         @media (max-width: 600px) {
             body {
