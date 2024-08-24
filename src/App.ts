@@ -17,7 +17,7 @@ export class App {
         const appDiv = document.getElementById('app');
         if (appDiv) {
             appDiv.innerHTML = `
-                <h1>GDisc: Keep score of your disc golf games</h1>
+                <input id="title-input" type="text" value="${this.grid.getTitle()}" style="width: 100%; font-size: 1.5em; text-align: center; margin-bottom: 10px;">
                 <div id="grid-container"></div>
                 <div class="button-container">
                 <button id="new-game-button" class="game-button">New Game (Same Players)</button>    
@@ -35,7 +35,16 @@ export class App {
             if (newGameButton) {
                 newGameButton.addEventListener('click', () => this.confirmNewGame());
             }
+
+            const titleInput = document.getElementById('title-input') as HTMLInputElement;
+            if (titleInput) {
+                titleInput.addEventListener('input', (e) => this.updateTitle((e.target as HTMLInputElement).value));
+            }
         }
+    }
+
+    private updateTitle(newTitle: string): void {
+        this.grid.updateTitle(newTitle);
     }
 
     private confirmReset(): void {

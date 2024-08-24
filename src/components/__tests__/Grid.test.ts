@@ -2,18 +2,19 @@ import { Grid } from '../Grid';
 
 describe('Grid', () => {
     let grid: Grid;
+    let mockLocalStorage: { [key: string]: string };
 
     beforeEach(() => {
-        const localStorageMock = (() => {
-            let store: { [key: string]: string } = {};
-            return {
-                getItem: (key: string) => store[key] || null,
-                setItem: (key: string, value: string) => store[key] = value,
-                clear: () => store = {}
-            };
-        })();
-        Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-
+        mockLocalStorage = {};
+        Object.defineProperty(window, 'localStorage', {
+            value: {
+                getItem: jest.fn((key) => mockLocalStorage[key]),
+                setItem: jest.fn((key, value) => {
+                    mockLocalStorage[key] = value.toString();
+                }),
+            },
+            writable: true
+        });
         grid = new Grid();
     });
 
@@ -93,5 +94,42 @@ describe('Grid', () => {
         expect(storedData.data[1][0]).toBe('Alice');
         expect(storedData.data[1][1]).toBe('');
         expect(storedData.data[1][10]).toBe('0');
+    });
+
+    test('should initialize with default title', () => {
+        expect(grid.getTitle()).toBe('GDisc: Keep score of your disc golf games');
+    });
+
+    test('should update title', () => {
+        const newTitle = 'My Disc Golf Game';
+        grid.updateTitle(newTitle);
+        expect(grid.getTitle()).toBe(newTitle);
+    });
+
+    test('should save title to localStorage', () => {
+        const newTitle = 'Saved Game Title';
+        grid.updateTitle(newTitle);
+        const savedData = JSON.parse(mockLocalStorage['gDiscGridData']);
+        expect(savedData.title).toBe(newTitle);
+    });
+
+    test('should load title from localStorage', () => {
+        const savedTitle = 'Loaded Game Title';
+        mockLocalStorage['gDiscGridData'] = JSON.stringify({
+            data: grid['data'],
+            startTime: new Date().toISOString(),
+            title: savedTitle
+        });
+        const newGrid = new Grid();
+        expect(newGrid.getTitle()).toBe(savedTitle);
+    });
+
+    test('should use default title if not present in localStorage', () => {
+        mockLocalStorage['gDiscGridData'] = JSON.stringify({
+            data: grid['data'],
+            startTime: new Date().toISOString()
+        });
+        const newGrid = new Grid();
+        expect(newGrid.getTitle()).toBe('GDisc: Keep score of your disc golf games');
     });
 });

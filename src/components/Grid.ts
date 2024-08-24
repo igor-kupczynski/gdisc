@@ -2,12 +2,14 @@ export class Grid {
     private data: string[][] = this.getInitialData();
     private readonly storageKey = 'gDiscGridData';
     private gameStartTime: Date = new Date();
+    private title: string = 'GDisc: Keep score of your disc golf games';
 
     constructor() {
         const storedData = this.loadFromStorage();
         if (storedData && Array.isArray(storedData.data) && storedData.data.length > 0) {
             this.data = storedData.data;
             this.gameStartTime = new Date(storedData.startTime);
+            this.title = storedData.title || this.title;
         } else {
             this.initializeNewGame();
         }
@@ -119,11 +121,12 @@ export class Grid {
     private saveToStorage(): void {
         localStorage.setItem(this.storageKey, JSON.stringify({
             data: this.data,
-            startTime: this.gameStartTime.toISOString()
+            startTime: this.gameStartTime.toISOString(),
+            title: this.title
         }));
     }
 
-    private loadFromStorage(): { data: string[][], startTime: string } | null {
+    private loadFromStorage(): { data: string[][], startTime: string, title: string } | null {
         const storedData = localStorage.getItem(this.storageKey);
         return storedData ? JSON.parse(storedData) : null;
     }
@@ -139,6 +142,15 @@ export class Grid {
             this.data[i + 1][0] = playerNames[i];
         }
         this.gameStartTime = new Date();
+        this.saveToStorage();
+    }
+
+    public getTitle(): string {
+        return this.title;
+    }
+
+    public updateTitle(newTitle: string): void {
+        this.title = newTitle;
         this.saveToStorage();
     }
 }
