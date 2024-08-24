@@ -43,6 +43,7 @@ Thumbs.db
 # Webpack build output
 /dist
 /build
+/docs
 
 # Coverage directory used by tools like istanbul
 coverage/
