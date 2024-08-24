@@ -17,14 +17,16 @@ export class App {
         const appDiv = document.getElementById('app');
         if (appDiv) {
             appDiv.innerHTML = `
-                <h1>GDisc: Keep score of your disc golf games</h1>
+                <input id="title-input" type="text" value="${this.grid.getTitle()}" style="width: 100%; font-size: 1.5em; text-align: center; margin-bottom: 10px;">
                 <div id="grid-container"></div>
+                <div id="time-info-container"></div>
                 <div class="button-container">
                 <button id="new-game-button" class="game-button">New Game (Same Players)</button>    
                 <button id="reset-button" class="game-button">New Game</button>    
                 </div>
             `;
             this.grid.render('grid-container');
+            this.grid.renderTimeInfo('time-info-container');
             
             const resetButton = document.getElementById('reset-button');
             if (resetButton) {
@@ -35,7 +37,17 @@ export class App {
             if (newGameButton) {
                 newGameButton.addEventListener('click', () => this.confirmNewGame());
             }
+
+            const titleInput = document.getElementById('title-input') as HTMLInputElement;
+            if (titleInput) {
+                titleInput.addEventListener('input', (e) => this.updateTitle((e.target as HTMLInputElement).value));
+            }
         }
+    }
+
+    private updateTitle(newTitle: string): void {
+        this.grid.updateTitle(newTitle);
+        this.grid.renderTimeInfo('time-info-container');
     }
 
     private confirmReset(): void {
@@ -47,6 +59,7 @@ export class App {
     private resetGame(): void {
         this.grid.reset();
         this.grid.render('grid-container');
+        this.grid.renderTimeInfo('time-info-container');
     }
 
     private confirmNewGame(): void {
@@ -58,5 +71,14 @@ export class App {
     private startNewGame(): void {
         this.grid.startNewGame();
         this.grid.render('grid-container');
+        this.grid.renderTimeInfo('time-info-container');
+    }
+
+    private handleCellUpdate(rowIndex: number, cellIndex: number, value: string): void {
+        this.grid.updateCellValue(rowIndex, cellIndex, value);
+    }
+
+    private handleNameUpdate(rowIndex: number, value: string): void {
+        this.grid.updatePlayerName(rowIndex, value);
     }
 }

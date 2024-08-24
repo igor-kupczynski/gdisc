@@ -2,12 +2,16 @@ export class Grid {
     private data: string[][] = this.getInitialData();
     private readonly storageKey = 'gDiscGridData';
     private gameStartTime: Date = new Date();
+    private gameLastUpdatedTime: Date = new Date();
+    private title: string = 'GDisc: Keep score of your disc golf games';
 
     constructor() {
         const storedData = this.loadFromStorage();
         if (storedData && Array.isArray(storedData.data) && storedData.data.length > 0) {
             this.data = storedData.data;
             this.gameStartTime = new Date(storedData.startTime);
+            this.gameLastUpdatedTime = new Date(storedData.lastUpdatedTime);
+            this.title = storedData.title || this.title;
         } else {
             this.initializeNewGame();
         }
@@ -16,6 +20,7 @@ export class Grid {
     private initializeNewGame(): void {
         this.data = this.getInitialData();
         this.gameStartTime = new Date();
+        this.gameLastUpdatedTime = new Date();
         this.saveToStorage();
     }
 
@@ -78,11 +83,6 @@ export class Grid {
         }
 
         container.appendChild(table);
-
-        const startTimeDiv = document.createElement('div');
-        startTimeDiv.id = 'game-start-time';
-        startTimeDiv.textContent = `Game started: ${this.formatDate(this.gameStartTime)}`;
-        container.appendChild(startTimeDiv);
     }
 
     private formatDate(date: Date): string {
@@ -91,13 +91,19 @@ export class Grid {
 
     private updateName(rowIndex: number, value: string): void {
         this.data[rowIndex][0] = value;
+        this.updateLastUpdatedTime();
         this.saveToStorage();
     }
 
     private updateCell(rowIndex: number, cellIndex: number, value: string): void {
         this.data[rowIndex][cellIndex] = value;
         this.updateTotal(rowIndex);
+        this.updateLastUpdatedTime();
         this.saveToStorage();
+    }
+
+    private updateLastUpdatedTime(): void {
+        this.gameLastUpdatedTime = new Date();
     }
 
     private updateTotal(rowIndex: number): void {
@@ -119,11 +125,13 @@ export class Grid {
     private saveToStorage(): void {
         localStorage.setItem(this.storageKey, JSON.stringify({
             data: this.data,
-            startTime: this.gameStartTime.toISOString()
+            startTime: this.gameStartTime.toISOString(),
+            lastUpdatedTime: this.gameLastUpdatedTime.toISOString(),
+            title: this.title
         }));
     }
 
-    private loadFromStorage(): { data: string[][], startTime: string } | null {
+    private loadFromStorage(): { data: string[][], startTime: string, lastUpdatedTime: string, title: string } | null {
         const storedData = localStorage.getItem(this.storageKey);
         return storedData ? JSON.parse(storedData) : null;
     }
@@ -139,6 +147,51 @@ export class Grid {
             this.data[i + 1][0] = playerNames[i];
         }
         this.gameStartTime = new Date();
+        this.gameLastUpdatedTime = new Date();
         this.saveToStorage();
+    }
+
+    public getTitle(): string {
+        return this.title;
+    }
+
+    public updateTitle(newTitle: string): void {
+        this.title = newTitle;
+        this.updateLastUpdatedTime();
+        this.saveToStorage();
+    }
+
+    public getLastUpdatedTime(): Date {
+        return this.gameLastUpdatedTime;
+    }
+
+    public renderTimeInfo(containerId: string): void {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const timeInfoDiv = document.createElement('div');
+        timeInfoDiv.className = 'time-info';
+
+        const startTimeDiv = document.createElement('div');
+        startTimeDiv.id = 'game-start-time';
+        startTimeDiv.textContent = `Game started: ${this.formatDate(this.gameStartTime)}`;
+        timeInfoDiv.appendChild(startTimeDiv);
+
+        const lastUpdatedTimeDiv = document.createElement('div');
+        lastUpdatedTimeDiv.id = 'game-last-updated-time';
+        lastUpdatedTimeDiv.textContent = `Last updated: ${this.formatDate(this.gameLastUpdatedTime)}`;
+        timeInfoDiv.appendChild(lastUpdatedTimeDiv);
+
+        container.appendChild(timeInfoDiv);
+    }
+
+    public updateCellValue(rowIndex: number, cellIndex: number, value: string): void {
+        this.updateCell(rowIndex, cellIndex, value);
+        this.renderTimeInfo('time-info-container');
+    }
+
+    public updatePlayerName(rowIndex: number, value: string): void {
+        this.updateName(rowIndex, value);
+        this.renderTimeInfo('time-info-container');
     }
 }
